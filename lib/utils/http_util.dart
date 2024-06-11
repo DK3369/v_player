@@ -39,12 +39,12 @@ class HttpUtil {
       onError: (DioError e, ErrorInterceptorHandler handler) async {
         String msg = '';
         switch (e.type) {
-          case DioErrorType.connectTimeout:
-          case DioErrorType.receiveTimeout:
-          case DioErrorType.sendTimeout:
+          case DioExceptionType.connectionTimeout:
+          case DioExceptionType.receiveTimeout:
+          case DioExceptionType.sendTimeout:
             msg = '网络请求超时，请稍后重试';
             break;
-          case DioErrorType.response:
+          case DioExceptionType.badResponse:
             switch (e.response!.statusCode) {
               case 401:
               case 403:
@@ -65,10 +65,10 @@ class HttpUtil {
             }
             break;
           default:
-            if (e.message.contains('Network is unreachable')) {
+            if ((e.message ?? "").contains('Network is unreachable')) {
               msg = '网络无法访问！';
             } else {
-              msg = e.message;
+              msg = e.message ?? "";
             }
             break;
         }

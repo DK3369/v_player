@@ -55,12 +55,12 @@ class _SourceFormPageState extends State<SourceFormPage> {
                 _buildFormItem(
                   key: 'name',
                   label: '资源名称',
-                  maxLength: 10,
+                  maxLength: 20,
                 ),
                 _buildFormItem(
                   key: 'type',
                   label: '资源类型',
-                  maxLength: 10,
+                  maxLength: 20,
                 ),
                 _buildFormItem(
                   key: 'url',
@@ -72,6 +72,7 @@ class _SourceFormPageState extends State<SourceFormPage> {
                   key: 'httpApi',
                   label: '资源Api',
                   hint: '获取资源的Api地址',
+                  maxLength: 9999,
                   keyboardType: TextInputType.url,
                   textInputAction: TextInputAction.done,
                 ),
