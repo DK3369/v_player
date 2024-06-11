@@ -5,7 +5,7 @@ import 'dart:ui';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
-import 'package:m3u8_downloader/m3u8_downloader.dart';
+// import 'package:m3u8_downloader/m3u8_downloader.dart';
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:v_player/common/constant.dart';
@@ -63,83 +63,83 @@ class DownloadTaskProvider with ChangeNotifier {
   /// 初始化
   ///
   Future<void> initialize(BuildContext context) async {
-    // 1. 初始化下载器
-    await M3u8Downloader.initialize(
-      onSelect: () {
-        return Navigator.of(context).pushNamed(Application.downloadPage);
-      },
-    );
-    await M3u8Downloader.config(
-      saveDir: await findSavePath('video'),
-      convertMp4: SpHelper.getBool(Constant.keyM3u8ToMp4) ?? false,
-      threadCount: 4,
-      debugMode: false,
-    );
-    await Future<void>.delayed(const Duration(milliseconds: 500));
-
-    // 2. 绑定监听
-    IsolateNameServer.registerPortWithName(_port.sendPort, 'downloader_send_port');
-    _port.listen((dynamic data) async {
-      if (_currentTask == null) return;
-
-      final int status = data["status"] as int;
-      switch (status) {
-        case 1:
-          _currentTask!.speed = data['speed'] as int;
-          _currentTask!.formatSpeed = data['formatSpeed'] as String;
-          _currentTask!.progress = data["progress"] / 1.0 as double;
-          _currentTask!.totalSize = data["totalSize"] as int;
-          _currentTask!.totalFormatSize = data["totalFormatSize"] as String;
-          _currentTask!.currentFormatSize = data["currentFormatSize"] as String;
-          _db.updateDownloadByUrl(_currentTask!.url, progress: _currentTask!.progress);
-          break;
-        case 2:
-          BotToast.showText(text:"【${_currentTask!.name}】下载成功!!!");
-          _currentTask!.progress = 1;
-          _db.updateDownloadByUrl(_currentTask!.url, status: DownloadStatus.success, savePath: data['filePath'] as String);
-          _downloadList = await _db.getDownloadList();
-          _currentTask = null;
-          // 下载下一个
-          _downloadNext();
-          break;
-        case 3:
-          BotToast.showText(text:"【${_currentTask!.name}】下载失败！！！");
-          _db.updateDownloadByUrl(_currentTask!.url, status: DownloadStatus.fail);
-          _downloadList = await _db.getDownloadList();
-          _currentTask = null;
-          // 下载下一个
-          _downloadNext();
-          break;
-      }
-      notifyListeners();
-    });
-
-    // 3. 获取下载列表
-    _downloadList = await _db.getDownloadList();
-
-    // 4. 添加网络监听器
-    _netSubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult res) {
-      if (res == ConnectivityResult.none) {
-        // 没有网络的处理
-      } else if (res == ConnectivityResult.mobile) {
-        // 没有网络的处理
-      } else if (res == ConnectivityResult.wifi) {
-        // wifi自动下载
-        if (currentTask == null && SpHelper.getBool(Constant.keyWifiAutoDownload, defValue: true) == true) {
-          _downloadNext();
-        }
-      }
-    });
-
-    // 5. 自动下载
-    if (SpHelper.getBool(Constant.keyWifiAutoDownload, defValue: true) == true) {
-      final connectivityResult = await Connectivity().checkConnectivity();
-      if (connectivityResult == ConnectivityResult.wifi) {
-        _downloadNext();
-      }
-    }
-
-    notifyListeners();
+    // // 1. 初始化下载器
+    // await M3u8Downloader.initialize(
+    //   onSelect: () {
+    //     return Navigator.of(context).pushNamed(Application.downloadPage);
+    //   },
+    // );
+    // await M3u8Downloader.config(
+    //   saveDir: await findSavePath('video'),
+    //   convertMp4: SpHelper.getBool(Constant.keyM3u8ToMp4) ?? false,
+    //   threadCount: 4,
+    //   debugMode: false,
+    // );
+    // await Future<void>.delayed(const Duration(milliseconds: 500));
+    //
+    // // 2. 绑定监听
+    // IsolateNameServer.registerPortWithName(_port.sendPort, 'downloader_send_port');
+    // _port.listen((dynamic data) async {
+    //   if (_currentTask == null) return;
+    //
+    //   final int status = data["status"] as int;
+    //   switch (status) {
+    //     case 1:
+    //       _currentTask!.speed = data['speed'] as int;
+    //       _currentTask!.formatSpeed = data['formatSpeed'] as String;
+    //       _currentTask!.progress = data["progress"] / 1.0 as double;
+    //       _currentTask!.totalSize = data["totalSize"] as int;
+    //       _currentTask!.totalFormatSize = data["totalFormatSize"] as String;
+    //       _currentTask!.currentFormatSize = data["currentFormatSize"] as String;
+    //       _db.updateDownloadByUrl(_currentTask!.url, progress: _currentTask!.progress);
+    //       break;
+    //     case 2:
+    //       BotToast.showText(text:"【${_currentTask!.name}】下载成功!!!");
+    //       _currentTask!.progress = 1;
+    //       _db.updateDownloadByUrl(_currentTask!.url, status: DownloadStatus.success, savePath: data['filePath'] as String);
+    //       _downloadList = await _db.getDownloadList();
+    //       _currentTask = null;
+    //       // 下载下一个
+    //       _downloadNext();
+    //       break;
+    //     case 3:
+    //       BotToast.showText(text:"【${_currentTask!.name}】下载失败！！！");
+    //       _db.updateDownloadByUrl(_currentTask!.url, status: DownloadStatus.fail);
+    //       _downloadList = await _db.getDownloadList();
+    //       _currentTask = null;
+    //       // 下载下一个
+    //       _downloadNext();
+    //       break;
+    //   }
+    //   notifyListeners();
+    // });
+    //
+    // // 3. 获取下载列表
+    // _downloadList = await _db.getDownloadList();
+    //
+    // // // 4. 添加网络监听器
+    // // _netSubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult res) {
+    // //   if (res == ConnectivityResult.none) {
+    // //     // 没有网络的处理
+    // //   } else if (res == ConnectivityResult.mobile) {
+    // //     // 没有网络的处理
+    // //   } else if (res == ConnectivityResult.wifi) {
+    // //     // wifi自动下载
+    // //     if (currentTask == null && SpHelper.getBool(Constant.keyWifiAutoDownload, defValue: true) == true) {
+    // //       _downloadNext();
+    // //     }
+    // //   }
+    // // });
+    //
+    // // 5. 自动下载
+    // if (SpHelper.getBool(Constant.keyWifiAutoDownload, defValue: true) == true) {
+    //   final connectivityResult = await Connectivity().checkConnectivity();
+    //   if (connectivityResult == ConnectivityResult.wifi) {
+    //     _downloadNext();
+    //   }
+    // }
+    //
+    // notifyListeners();
   }
 
   ///
@@ -169,25 +169,25 @@ class DownloadTaskProvider with ChangeNotifier {
     }
 
     // 3.1 创建新的下载 TODO 与收藏的冲突处理。 api字段暂未处理
-    final dynamic savePath = await M3u8Downloader.getSavePath(url);
-    final String m3u8Path = savePath['m3u8'] as String;
-    String fileId = '';
-    if (m3u8Path.contains(path.separator)) {
-      fileId = m3u8Path.split(path.separator)[m3u8Path.split(path.separator).length - 2];
-    }
-    await _db.insertDownload(DownloadModel(
-      vid: video.id,
-      tid: video.tid,
-      name: name,
-      url: url,
-      api: httpApi,
-      type: video.type,
-      pic: video.pic,
-      fileId: fileId,
-      status: DownloadStatus.running,
-      progress: 0,
-      savePath: m3u8Path,
-    ),);
+    // final dynamic savePath = await M3u8Downloader.getSavePath(url);
+    // final String m3u8Path = savePath['m3u8'] as String;
+    // String fileId = '';
+    // if (m3u8Path.contains(path.separator)) {
+    //   fileId = m3u8Path.split(path.separator)[m3u8Path.split(path.separator).length - 2];
+    // }
+    // await _db.insertDownload(DownloadModel(
+    //   vid: video.id,
+    //   tid: video.tid,
+    //   name: name,
+    //   url: url,
+    //   api: httpApi,
+    //   type: video.type,
+    //   pic: video.pic,
+    //   fileId: fileId,
+    //   status: DownloadStatus.running,
+    //   progress: 0,
+    //   savePath: m3u8Path,
+    // ),);
 
     // 4. 刷新下载列表
     _downloadList = await _db.getDownloadList();
@@ -200,8 +200,8 @@ class DownloadTaskProvider with ChangeNotifier {
   /// 暂停下载
   ///
   Future<void> pause(String url) async {
-    M3u8Downloader.pause(url);
-    await _db.updateDownloadByUrl(url, status: DownloadStatus.waiting);
+    // M3u8Downloader.pause(url);
+    // await _db.updateDownloadByUrl(url, status: DownloadStatus.waiting);
   }
 
   ///
@@ -256,7 +256,7 @@ class DownloadTaskProvider with ChangeNotifier {
     }
     // 2. 删除本地文件
     for (final DownloadModel e in models) {
-      M3u8Downloader.delete(e.url!);
+      // M3u8Downloader.delete(e.url!);
     }
     // 3. 删除下载记录
     final int count = await _db.deleteDownloadByIds(models.map((e) => e.id!).toList());
@@ -299,13 +299,13 @@ class DownloadTaskProvider with ChangeNotifier {
   Future<void> _startDownload(String url, String name) async {
     _currentTask = DownloadTask(name: name, url: url);
     await _db.updateDownloadByUrl(url, status: DownloadStatus.running);
-    M3u8Downloader.download(
-        url: url,
-        name: name,
-        progressCallback: progressCallback,
-        successCallback: successCallback,
-        errorCallback: errorCallback
-    );
+    // M3u8Downloader.download(
+    //     url: url,
+    //     name: name,
+    //     progressCallback: progressCallback,
+    //     successCallback: successCallback,
+    //     errorCallback: errorCallback
+    // );
     _downloadList = await _db.getDownloadList();
     notifyListeners();
   }

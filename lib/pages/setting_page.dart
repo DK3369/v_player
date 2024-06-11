@@ -1,6 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:m3u8_downloader/m3u8_downloader.dart';
+// import 'package:m3u8_downloader/m3u8_downloader.dart';
 import 'package:provider/provider.dart';
 import 'package:v_player/common/constant.dart';
 import 'package:v_player/provider/app_info.dart';
@@ -113,11 +113,11 @@ class _SettingPageState extends State<SettingPage> {
 
   Future<void> _toggleConvertMp4(bool flag) async {
     try {
-      await M3u8Downloader.config(convertMp4: flag);
-      setState(() {
-        _toMP4 = flag;
-      });
-      SpHelper.putBool(Constant.keyM3u8ToMp4, flag);
+      // await M3u8Downloader.config(convertMp4: flag);
+      // setState(() {
+      //   _toMP4 = flag;
+      // });
+      // SpHelper.putBool(Constant.keyM3u8ToMp4, flag);
     } catch(err) {
       BotToast.showText(text: '设置失败');
     }
